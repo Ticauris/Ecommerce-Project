@@ -60,12 +60,13 @@ CREATE TABLE product_categories (
 );
 
 CREATE TABLE product_variation (
-  ID               BIGSERIAL,
-  var_name         VARCHAR(100) NOT NULL,
-  var_description  VARCHAR(1000),
-  price            NUMERIC(10,2) NOT NULL,
-  cat_ID           			 INTEGER NOT NULL REFERENCES product_categories(ID),
-  brand_ID         			 INTEGER REFERENCES brand_vendor(ID),
+  ID                         BIGSERIAL,
+  var_name                   VARCHAR(100) NOT NULL,
+  var_description            VARCHAR(1000),
+  var_image                  TEXT,
+  price                      NUMERIC(10,2) NOT NULL,
+  cat_ID           			     INTEGER NOT NULL REFERENCES product_categories(ID),
+  brand_ID         			     INTEGER REFERENCES brand_vendor(ID),
   CONSTRAINT var_ID          PRIMARY KEY(ID),
   CONSTRAINT unique_var_ID   UNIQUE(var_name, var_description, price, cat_ID, brand_ID)
 );
