@@ -171,6 +171,39 @@ app.delete("/product_categories/:id", async(req, res) => {
     }
 });
 
+
+app.post("/product_variation", async (req, res) => {
+    try {
+        const {var_name, var_description, price, cat_ID, brand_ID} = req.body;
+        const new_product_variation = await pool.query(
+            "INSERT INTO product_variation(var_name, var_description, price, cat_ID, brand_ID) VALUES($1, $2, $3, $4, $5) RETURNING *",
+             [var_name, var_description, price, cat_ID, brand_ID]);
+        console.log(req.body);
+        res.json(new_product_variation.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error creating product variation."});
+    }
+});
+
+app.delete("/product_variation/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const delete_product_variation = await pool.query(
+            "DELETE FROM product_variation WHERE var_ID = $1 RETURNING *",
+            [id]);
+        if (delete_product_variation.rows.length === 0) {
+            return res.status(404).json({message: "Product variation not found."});
+        }
+        res.json(delete_product_variation.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting product variation."});
+    }
+});
+
+
+
 app.post("/product", async(req, res)=> {
     try {
         const {sku_number, quantity, store_ID, var_ID} = req.body;

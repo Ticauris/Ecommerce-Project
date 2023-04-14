@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*creates black header bar 16 pixel wide*/
+header{
+  background-color: #404040;
+  padding: 1rem
+}
+
+/*makes links in header white and font bold*/
+header a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
+
+}

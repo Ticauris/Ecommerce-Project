@@ -1,16 +1,18 @@
-CREATE DATABASE store_database
-/**/
+CREATE SEQUENCE customer_id_seq;
+
 CREATE TABLE customer(
-    ID                                  BIGSERIAL,
+    ID                                  SERIAL,
     customer_email                      VARCHAR(100)UNIQUE,
     customer_phone_number               VARCHAR(12),
     customer_password                   VARCHAR(200),
     CONSTRAINT customer_ID              PRIMARY KEY (ID),
     CONSTRAINT customer_unique_ID       UNIQUE (customer_email, customer_phone_number, customer_password)
 );
-/**/
+
+CREATE SEQUENCE address_id_seq;
+
 CREATE TABLE address(
-    ID                          BIGSERIAL,
+    ID                          SERIAL,
     unit_num                    INTEGER,
     street_num                  INTEGER,
     address_line_1              VARCHAR(100),
@@ -22,8 +24,10 @@ CREATE TABLE address(
     CONSTRAINT address_unique   UNIQUE(unit_num, street_num, address_line_1, address_line_2, city, zip_code) 
 );
 
+CREATE SEQUENCE specific_stores_id_seq;
+
 CREATE TABLE specific_stores(
-  ID                           BIGSERIAL,
+  ID                            SERIAL,
   address_ID                   INTEGER REFERENCES address(ID),
   inventory                    INTEGER,
   hours                        VARCHAR(255) NOT NULL,
@@ -32,34 +36,43 @@ CREATE TABLE specific_stores(
   CONSTRAINT store_unique_ID   UNIQUE (address_ID, inventory, hours, shipping_options)
 );
 
+
+CREATE SEQUENCE brand_vendor_id_seq;
+
 CREATE TABLE brand_vendor (
-  ID          BIGSERIAL,
-  brand_name  VARCHAR(100) NOT NULL,
-  CONSTRAINT brand_ID PRIMARY KEY(ID),
+  ID                        SERIAL,
+  brand_name                VARCHAR(100) NOT NULL,
+  CONSTRAINT                brand_ID PRIMARY KEY(ID),
   CONSTRAINT unique_brand_name UNIQUE(brand_name)
 );
 
+CREATE SEQUENCE payment_method_id_seq;
+
 CREATE TABLE payment_method(
-    ID                          BIGSERIAL,
+    ID                           SERIAL,
     customer_ID                 INTEGER REFERENCES customer(ID),
-    /*maybe this value should be a varchar*/
     payment_name                VARCHAR(100),
     provide                     VARCHAR(50),
     card_num                    VARCHAR(16),
-    card_exp_date               DATE,/*update to int, gives excess information*/
+    card_exp_date               INTEGER,
     default_payment             BOOLEAN
 );
 
+CREATE SEQUENCE product_categories_id_seq;
+
 CREATE TABLE product_categories (
-  ID                           BIGSERIAL,
+  ID                            SERIAL,
   cat_name                     VARCHAR(100) NOT NULL,
   description_text             VARCHAR(1000),   
   CONSTRAINT cat_ID            PRIMARY KEY(ID),
   CONSTRAINT unique_cat_ID     UNIQUE(cat_name, description_text)
 );
 
+
+CREATE SEQUENCE product_variation_id_seq;
+
 CREATE TABLE product_variation (
-  ID                         BIGSERIAL,
+  ID                          SERIAL,
   var_name                   VARCHAR(100) NOT NULL,
   var_description            VARCHAR(1000),
   var_image                  TEXT,
@@ -70,31 +83,40 @@ CREATE TABLE product_variation (
   CONSTRAINT unique_var_ID   UNIQUE(var_name, var_description, price, cat_ID, brand_ID)
 );
 
+CREATE SEQUENCE product_id_seq;
 
 CREATE TABLE product(
-    ID                          BIGSERIAL,
+    ID                          SERIAL,
     quantity                    INTEGER,
     store_ID                    INTEGER REFERENCES specific_stores(ID),
     var_ID                      INTEGER REFERENCES product_variation(ID),
+    prod_image                  TEXT,
     CONSTRAINT product_ID       PRIMARY KEY (ID)                       
 );
 
+CREATE SEQUENCE customer_cart_id_seq;
+
 CREATE TABLE customer_cart(
-    ID                          BIGSERIAL,
-    create_at                   NOT NULL DEFAULT NOW(),
+    ID                          SERIAL,
+    create_at                   INTEGER,
     product_ID                  INTEGER REFERENCES product(ID),
-    customer_ID                 INTEGER REFERENCES customer(ID)
+    customer_ID                 INTEGER REFERENCES customer(ID),
     CONSTRAINT cart_ID          PRIMARY KEY (ID)
 );
 
+
+CREATE SEQUENCE shipping_options_seq;
+
 CREATE TABLE shipping_options(
-  ID                            BIGSERIAL,
+  ID                             SERIAL,
   shipping_option               VARCHAR(50),
   CONSTRAINT shipping_ID        PRIMARY KEY(ID)
 );
 
+CREATE SEQUENCE customer_order_seq;
+
 CREATE TABLE customer_order (
-    ID                          BIGSERIAL,
+    ID                          SERIAL,
     customer_ID                 INTEGER REFERENCES customer(ID),
     order_date                  DATE,
     order_total                 NUMERIC(10, 2),
@@ -106,14 +128,17 @@ CREATE TABLE customer_order (
     /*maybe add a order status value*/
 );
 
+CREATE SEQUENCE customer_order_item_seq;
+
 CREATE TABLE customer_order_item (
-    ID                          BIGSERIAL,
+    ID                           SERIAL,
     order_ID                    INTEGER REFERENCES customer_order(ID),
     product_ID                  INTEGER REFERENCES product(ID),
     quantity                    INTEGER,
     price                       NUMERIC(10, 2),
     CONSTRAINT order_item_ID   PRIMARY KEY (ID)
 );
+
 
 -- Insert data into the customer table
 INSERT INTO customer (customer_email, customer_phone_number, customer_password) VALUES
@@ -133,15 +158,11 @@ INSERT INTO specific_stores (address_ID, inventory, hours, shipping_options) VAL
   (1, 100, '9AM-9PM', 'Standard, Expedited'),
   (2, 50, '10AM-8PM', 'Standard, In-store pickup'),
   (3, 200, '8AM-10PM', 'Standard, Overnight'),
-  (4, 75, '11AM-7PM', 'Standard'), 
-   (505, 2468, 'Park Ave', 'San Francisco', 'CA', 94101),
-  (606, 369, 'Michigan Ave', 'Detroit', 'MI', 48201),
-  (707, 555, 'Fifth Ave', 'New York', 'NY', 10001);
+  (4, 75, '11AM-7PM', 'Standard');
 
 -- Insert data into the brand_vendor table
 INSERT INTO brand_vendor (brand_name) VALUES
   ('Apple'),
-  ('Samsung'),
   ('Nike'),
   ('Adidas'),
   ('Sony'),
@@ -150,11 +171,12 @@ INSERT INTO brand_vendor (brand_name) VALUES
   ('Panasonic');
 
 -- Insert data into the payment_method table
-INSERT INTO payment_method (customer_ID, payment_name, provide, card_num, card_exp_date, default_payment) VALUES
-  (1, 'Visa', 'Visa Inc.', '1234567812345678', '2024-10-01', true),
-  (2, 'Mastercard', 'Mastercard Worldwide', '9876543210987654', '2023-05-01', false),
-  (3, 'American Express', 'American Express Company', '1111222233334444', '2025-12-01', false),
-  (4, 'PayPal', 'PayPal Holdings Inc.', 'johndoe@example.com', NULL, true);
+INSERT INTO payment_method (customer_ID, payment_name, provide, card_num, card_exp_date, default_payment) VALUES 
+    (1, 'Visa', 'Visa Inc.', '1234567812345678', 1124, true),
+    (1, 'Mastercard', 'Mastercard International', '8765432187654321', 0325, false),
+    (2, 'American Express', 'American Express Company', '1111222233334444', 0626, true),
+    (3, 'PayPal', 'PayPal Holdings, Inc.', 'abcde12345', null, true);
+
 
 -- Insert data into the product_categories table
 INSERT INTO product_categories (cat_name, description_text) VALUES
@@ -176,36 +198,23 @@ INSERT INTO product_variation (var_name, var_description, price, cat_ID, brand_I
 --Insert data into product table
 INSERT INTO product (quantity, store_ID, var_ID, prod_image)
 VALUES
-  (100, 1, 1, 'https://example.com/iphone.jpg'),
-  (75, 2, 2, 'https://example.com/galaxy.jpg'),
-  (50, 3, 3, 'https://example.com/airpods.jpg'),
-  (25, 4, 4, 'https://example.com/shoes.jpg'),
-  (10, 1, 5, 'https://example.com/tv.jpg'),
-  (5, 2, 6, 'https://example.com/ps5.jpg'),
-  (20, 3, 7, 'https://example.com/macbook.jpg'),
-  (30, 4, 8, NULL),
-  (15, 1, 1, 'https://example.com/iphone.jpg'),
-  (40, 2, 2, 'https://example.com/galaxy.jpg'),
-  (60, 3, 3, 'https://example.com/airpods.jpg'),
-  (80, 4, 4, 'https://example.com/shoes.jpg'),
-  (90, 1, 5, 'https://example.com/tv.jpg'),
-  (100, 2, 6, 'https://example.com/ps5.jpg'),
-  (150, 3, 7, 'https://example.com/macbook.jpg'),
-  (200, 4, 8, NULL),
-  (30, 1, 1, 'https://example.com/iphone.jpg'),
-  (25, 2, 2, 'https://example.com/galaxy.jpg'),
-  (50, 3, 3, 'https://example.com/airpods.jpg');
+  (100, 1, 1, 'https://www.shutterstock.com/shutterstock/photos/2204508595/display_1500/stock-photo-bangkok-thailand-september-isolate-of-the-new-iphone-pro-deep-purple-the-new-color-2204508595.jpg'), /*iphone*/
+  (75, 2, 2, 'https://www.shutterstock.com/shutterstock/photos/2167067927/display_1500/stock-photo-rostov-on-don-russia-april-samsung-galaxy-s-ultra-in-green-on-a-white-background-a-new-2167067927.jpg'),/*s23*/
+  (50, 3, 3, 'https://www.shutterstock.com/shutterstock/photos/2071692311/display_1500/stock-photo-white-wireless-headphones-with-no-background-isolated-2071692311.jpg'), /*airpods*/
+  (25, 4, 4, 'https://www.shutterstock.com/shutterstock/photos/1511073545/display_1500/stock-photo-ipoh-perak-malaysia-september-adidas-yeezy-inertia-model-the-adidas-yeezy-inertia-1511073545.jpg'),/*shoes*/
+  (10, 1, 5, 'https://www.shutterstock.com/shutterstock/photos/410515291/display_1500/stock-photo--k-television-sky-or-monitor-landscape-isolated-on-white-background-410515291.jpg'),/*tv*/
+  (5, 2, 6, 'https://www.shutterstock.com/shutterstock/photos/1757486213/display_1500/stock-photo-japan-june-presentation-of-a-new-product-from-sony-wireless-white-console-playstation-1757486213.jpg'),/*ps5*/
+  (20, 3, 7, 'https://www.shutterstock.com/shutterstock/photos/1654752016/display_1500/stock-photo-cracow-poland-february-macbook-pro-a-new-version-os-for-mac-of-the-laptop-from-apple-1654752016.jpg');/*macbok*/
  
 /*update store inventory*/
 CREATE OR REPLACE FUNCTION update_store_inventory()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE store
-  if(NEW.store_ID NOT NULL) THEN 
+ IF NEW.store_ID IS NOT NULL THEN 
     UPDATE store
     SET inventory = inventory + NEW.quantity - OLD.quantity
     WHERE id = NEW.store_id;
-  END IF
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
