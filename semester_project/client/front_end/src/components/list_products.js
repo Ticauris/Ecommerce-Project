@@ -19,7 +19,7 @@ function ProductList() {
           <h3>{product.quantity}</h3>
           <p>{product.store_ID}</p>
           <p>{product.var_ID}</p>
-          <p>{product.prod_image}</p>
+          <img src = {product.prod_image} alt={product.var.description}/>
         </div>
       ))}
     </div>
