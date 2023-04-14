@@ -75,7 +75,6 @@ CREATE TABLE product_variation (
   ID                          SERIAL,
   var_name                   VARCHAR(100) NOT NULL,
   var_description            VARCHAR(1000),
-  var_image                  TEXT,
   price                      NUMERIC(10,2) NOT NULL,
   cat_ID           			     INTEGER NOT NULL REFERENCES product_categories(ID),
   brand_ID         			     INTEGER REFERENCES brand_vendor(ID),

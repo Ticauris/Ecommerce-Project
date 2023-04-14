@@ -7,6 +7,8 @@ const pool = require("./database");
 app.use(cors());
 app.use(express.json());
 
+
+
 //create functions
 app.post("/customers", async(req, res)=> {
     try {
@@ -22,6 +24,15 @@ app.post("/customers", async(req, res)=> {
     }
 });
 
+app.get("/customers", async(req, res)=> {
+    try {
+        const customer = await pool.query("SELECT * FROM customer");
+        res.json(customer.rows[0]);
+} catch (err) {
+    console.error(err.message)
+    res.status(500).json({message:"Error retrieving products."})
+}} );
+
 app.delete("/customers/:id", async(req, res)=> {
     try {
         const { id } = req.params;
@@ -32,6 +43,9 @@ app.delete("/customers/:id", async(req, res)=> {
         res.status(500).json({message: "Error deleting customer."})
     }
 });
+
+
+
 
 app.post("/address", async(req, res)=> {
     try {
@@ -47,6 +61,16 @@ app.post("/address", async(req, res)=> {
     }
 });
 
+app.get("address", async(req, res)=>{
+    try {
+        const address = await pool.query("SELECT * FROM address");
+        res.json(address.rows[0])
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error retrieving addres."});
+    }
+});
+
 app.delete("/address/:id", async(req, res)=> {
     try {
         const { id } = req.params;
@@ -57,6 +81,8 @@ app.delete("/address/:id", async(req, res)=> {
         res.status(500).json({message: "Error deleting customer address."})
     }
 });
+
+
 
 app.post("/stores", async(req, res)=> {
     try {
@@ -70,6 +96,17 @@ app.post("/stores", async(req, res)=> {
         console.error(err.message);
         res.status(500).json({message: "Error creating store."})
     }
+});
+
+app.get("/stores", async(req, res)=>{
+    try {
+        const stores = pool.query("SELECT * FROM address");
+        res.json(stores.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retriving addresses."})
+    }
+
 });
 
 app.delete("/stores/:id", async(req, res)=> {
@@ -94,6 +131,16 @@ app.post("/brands", async(req, res)=> {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating brand."})
+    }
+});
+
+app.get("/brands", async(req, res) =>{
+    try {
+        const brands = pool.query("SELECT * FROM brand_vendor");
+        res.json(brands.row[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(400).json({message: "Error retrieving brands"});
     }
 });
 
@@ -129,6 +176,16 @@ app.post("/payment_method", async(req, res)=> {
     }
 });
 
+app.get("/payment_method", async(req, res) => {
+    try {
+        const payments = pool.query("SELECT * FROM payment_method")
+        res.json(payments.rows[0]);
+    } catch (error) {
+        console.error(err.message)
+        res.status(500).json({message: "Error retrieving payment method."})
+    }
+});
+
 app.delete("/payment_method/:id", async(req, res) => {
     try {
         const { id } = req.params;
@@ -154,6 +211,16 @@ app.post("/product_categories", async(req, res)=> {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating product category."})
+    }
+});
+
+app.get("/product_categories", async(req, res)=>{
+    try {
+        const product_categories = pool.query("SELECT * FROM product_categories");
+        res.json(product_categories.rows[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retrieving categories"})
     }
 });
 
@@ -186,6 +253,17 @@ app.post("/product_variation", async (req, res) => {
     }
 });
 
+app.get("/product_variation", async(req, res)=>{
+    try {
+        const product_variation = pool.query("SELECT * FROM product_variation");
+        res.json(product_variation.rows[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retrieving variation."})
+    }
+});
+
+
 app.delete("/product_variation/:id", async (req, res) => {
     try {
         const {id} = req.params;
@@ -208,13 +286,23 @@ app.post("/product", async(req, res)=> {
     try {
         const {sku_number, quantity, store_ID, var_ID} = req.body;
         const new_product = await pool.query(
-            "INSERT INTO product(sku_number, quantity, store_ID, var_ID) VALUES($1, $2, $3, $4) RETURNING *",
-             [sku_number, quantity, store_ID, var_ID]);
+            "INSERT INTO product(quantity, store_ID, var_ID, prod_image) VALUES($1, $2, $3, $4) RETURNING *",
+             [quantity, store_ID, var_ID, prod_image]);
           console.log(req.body)
           res.json(new_product.rows[0])
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating product."})
+    }
+});
+
+app.get("/product", async(req, res)=>{
+    try {
+        const product_variation = pool.query("SELECT * FROM product");
+        res.json(product.rows[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retrieving product."})
     }
 });
 
