@@ -7,6 +7,8 @@ const pool = require("./database");
 app.use(cors());
 app.use(express.json());
 
+
+
 //create functions
 app.post("/customers", async(req, res)=> {
     try {
@@ -14,13 +16,36 @@ app.post("/customers", async(req, res)=> {
         const new_customer = await pool.query(
             "INSERT INTO customer(customer_email, customer_phone_number, customer_password) VALUES($1, $2, $3) RETURNING *",
              [customer_email, customer_phone_number, customer_password]);
-          console.log(req.body)
-          res.json(new_customer.rows[0])
+        console.log(req.body)
+        res.json(new_customer.rows[0])
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating customer."})
     }
 });
+
+app.get("/customers", async(req, res)=> {
+    try {
+        const customer = await pool.query("SELECT * FROM customer");
+        res.json(customer.rows[0]);
+} catch (err) {
+    console.error(err.message)
+    res.status(500).json({message:"Error retrieving products."})
+}} );
+
+app.delete("/customers/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_customer = await pool.query("DELETE FROM customer WHERE customer_id = $1", [id]);
+        res.json("Customer was deleted.");
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting customer."})
+    }
+});
+
+
+
 
 app.post("/address", async(req, res)=> {
     try {
@@ -32,9 +57,32 @@ app.post("/address", async(req, res)=> {
           res.json(new_address.rows[0])
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({message: "Error creating customer."})
+        res.status(500).json({message: "Error creating customer address."})
     }
 });
+
+app.get("address", async(req, res)=>{
+    try {
+        const address = await pool.query("SELECT * FROM address");
+        res.json(address.rows[0])
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error retrieving addres."});
+    }
+});
+
+app.delete("/address/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_address = await pool.query("DELETE FROM address WHERE address_id = $1", [id]);
+        res.json("Address was deleted.");
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting customer address."})
+    }
+});
+
+
 
 app.post("/stores", async(req, res)=> {
     try {
@@ -47,6 +95,28 @@ app.post("/stores", async(req, res)=> {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating store."})
+    }
+});
+
+app.get("/stores", async(req, res)=>{
+    try {
+        const stores = pool.query("SELECT * FROM address");
+        res.json(stores.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retriving addresses."})
+    }
+
+});
+
+app.delete("/stores/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_store = await pool.query("DELETE FROM specific_stores WHERE store_id = $1", [id]);
+        res.json("Store was deleted.");
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting store."})
     }
 });
 
@@ -64,6 +134,34 @@ app.post("/brands", async(req, res)=> {
     }
 });
 
+app.get("/brands", async(req, res) =>{
+    try {
+        const brands = pool.query("SELECT * FROM brand_vendor");
+        res.json(brands.row[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(400).json({message: "Error retrieving brands"});
+    }
+});
+
+app.delete("/brands/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_brand = await pool.query(
+            "DELETE FROM brand_vendor WHERE brand_id = $1 RETURNING *",
+             [id]
+        );
+        if (delete_brand.rows.length === 0) {
+            return res.status(404).json({ message: `Brand with ID ${id} not found.` });
+        }
+        res.json({ message: "Brand deleted successfully.", brand: delete_brand.rows[0] });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Error deleting brand." });
+    }
+});
+
+
 app.post("/payment_method", async(req, res)=> {
     try {
         const {customer_ID, payment_name, provide, card_num, card_exp_date, default_payment} = req.body;
@@ -75,6 +173,30 @@ app.post("/payment_method", async(req, res)=> {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating payment."})
+    }
+});
+
+app.get("/payment_method", async(req, res) => {
+    try {
+        const payments = pool.query("SELECT * FROM payment_method")
+        res.json(payments.rows[0]);
+    } catch (error) {
+        console.error(err.message)
+        res.status(500).json({message: "Error retrieving payment method."})
+    }
+});
+
+app.delete("/payment_method/:id", async(req, res) => {
+    try {
+        const { id } = req.params;
+        const deletePayment = await pool.query("DELETE FROM payment_method WHERE payment_ID = $1", [id]);
+        if(deletePayment.rowCount === 0) {
+            return res.status(404).json({ message: "Payment not found." });
+        }
+        res.json({ message: "Payment successfully deleted." });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Error deleting payment." });
     }
 });
 
@@ -92,32 +214,108 @@ app.post("/product_categories", async(req, res)=> {
     }
 });
 
+app.get("/product_categories", async(req, res)=>{
+    try {
+        const product_categories = pool.query("SELECT * FROM product_categories");
+        res.json(product_categories.rows[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retrieving categories"})
+    }
+});
 
-app.post("/product_variation", async(req, res)=> {
+app.delete("/product_categories/:id", async(req, res) => {
+    try {
+        const { id } = req.params;
+        const deleteProductCategory = await pool.query("DELETE FROM product_categories WHERE cat_ID = $1", [id]);
+        if(deleteProductCategory.rowCount === 0) {
+            return res.status(404).json({ message: "Product category not found." });
+        }
+        res.json({ message: "Product category successfully deleted." });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Error deleting product category." });
+    }
+});
+
+
+app.post("/product_variation", async (req, res) => {
     try {
         const {var_name, var_description, price, cat_ID, brand_ID} = req.body;
         const new_product_variation = await pool.query(
             "INSERT INTO product_variation(var_name, var_description, price, cat_ID, brand_ID) VALUES($1, $2, $3, $4, $5) RETURNING *",
              [var_name, var_description, price, cat_ID, brand_ID]);
-          console.log(req.body)
-          res.json(new_product_variation.rows[0])
+        console.log(req.body);
+        res.json(new_product_variation.rows[0]);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({message: "Error creating product variation."})
+        res.status(500).json({message: "Error creating product variation."});
     }
 });
+
+app.get("/product_variation", async(req, res)=>{
+    try {
+        const product_variation = pool.query("SELECT * FROM product_variation");
+        res.json(product_variation.rows[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retrieving variation."})
+    }
+});
+
+
+app.delete("/product_variation/:id", async (req, res) => {
+    try {
+        const {id} = req.params;
+        const delete_product_variation = await pool.query(
+            "DELETE FROM product_variation WHERE var_ID = $1 RETURNING *",
+            [id]);
+        if (delete_product_variation.rows.length === 0) {
+            return res.status(404).json({message: "Product variation not found."});
+        }
+        res.json(delete_product_variation.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting product variation."});
+    }
+});
+
+
 
 app.post("/product", async(req, res)=> {
     try {
         const {sku_number, quantity, store_ID, var_ID} = req.body;
         const new_product = await pool.query(
-            "INSERT INTO product(sku_number, quantity, store_ID, var_ID) VALUES($1, $2, $3, $4) RETURNING *",
-             [sku_number, quantity, store_ID, var_ID]);
+            "INSERT INTO product(quantity, store_ID, var_ID, prod_image) VALUES($1, $2, $3, $4) RETURNING *",
+             [quantity, store_ID, var_ID, prod_image]);
           console.log(req.body)
           res.json(new_product.rows[0])
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating product."})
+    }
+});
+
+app.get("/product", async(req, res)=>{
+    try {
+        const product_variation = pool.query("SELECT * FROM product");
+        res.json(product.rows[0]);
+    } catch (error) {
+        console.error(err.message);
+        res.status(500).json({message:"Error retrieving product."})
+    }
+});
+
+app.delete("/product/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_product = await pool.query(
+            "DELETE FROM product WHERE product_id = $1",
+             [id]);
+          res.json("Product deleted successfully")
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting product."})
     }
 });
 
@@ -135,6 +333,19 @@ app.post("/customer_cart", async(req, res)=> {
     }
 });
 
+app.delete("/customer_cart/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_cart = await pool.query(
+            "DELETE FROM customer_cart WHERE cart_id = $1",
+             [id]);
+          res.json("Cart deleted successfully")
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting cart."})
+    }
+});
+
 app.post("/shipping_options", async(req, res)=> {
     try {
         const {shipping_options} = req.body;
@@ -149,6 +360,18 @@ app.post("/shipping_options", async(req, res)=> {
     }
 });
 
+app.delete("/shipping_options/:id", async(req, res)=> {
+    try {
+        const { id } = req.params;
+        const delete_shipping_option = await pool.query(
+            "DELETE FROM shipping_options WHERE option_id = $1",
+             [id]);
+          res.json("Shipping option deleted successfully")
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting shipping option."})
+    }
+});
 
 app.post("/customer_order", async(req, res)=> {
     try {
@@ -161,6 +384,18 @@ app.post("/customer_order", async(req, res)=> {
     } catch (err) {
         console.error(err.message);
         res.status(500).json({message: "Error creating order."})
+    }
+});
+
+app.delete("/customer_order/:id", async(req, res)=> {
+    try {
+        const {id} = req.params;
+        const delete_customer_order = await pool.query(
+            "DELETE FROM customer_order WHERE order_ID = $1", [id]);
+          res.json("Customer order deleted successfully.")
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting customer order."})
     }
 });
 
@@ -178,7 +413,17 @@ app.post("/customer_order_item", async(req, res)=> {
     }
 });
 
-
+app.delete("/customer_order_item/:id", async(req, res)=> {
+    try {
+        const {id} = req.params;
+        const delete_customer_order_item = await pool.query(
+            "DELETE FROM customer_order_item WHERE order_item_ID = $1", [id]);
+          res.json("Customer order item deleted successfully.")
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({message: "Error deleting customer order item."})
+    }
+});
 
 app.listen(5000, ()=>{
     console.log("server started on 5000");
