@@ -27,7 +27,7 @@ CREATE TABLE address(
 CREATE SEQUENCE specific_stores_id_seq;
 
 CREATE TABLE specific_stores(
-  ID                           SERIAL,
+  ID                           BIGSERIAL,
   address_ID                   INTEGER REFERENCES address(ID),
   inventory                    INTEGER,
   hours                        VARCHAR(255) NOT NULL,
@@ -40,16 +40,16 @@ CREATE TABLE specific_stores(
 CREATE SEQUENCE brand_vendor_id_seq;
 
 CREATE TABLE brand_vendor (
-  ID                                SERIAL,
-  brand_name                        VARCHAR(100) NOT NULL,
-  CONSTRAINT brand_ID               PRIMARY KEY(ID),
-  CONSTRAINT unique_brand_name      UNIQUE(brand_name)
+  ID          BIGSERIAL,
+  brand_name  VARCHAR(100) NOT NULL,
+  CONSTRAINT brand_ID PRIMARY KEY(ID),
+  CONSTRAINT unique_brand_name UNIQUE(brand_name)
 );
 
 CREATE SEQUENCE payment_method_id_seq;
 
 CREATE TABLE payment_method(
-    ID                          SERIAL,
+    ID                          BIGSERIAL,
     customer_ID                 INTEGER REFERENCES customer(ID),
     payment_name                VARCHAR(100),
     provide                     VARCHAR(50),
@@ -72,21 +72,20 @@ CREATE TABLE product_categories (
 CREATE SEQUENCE product_variation_id_seq;
 
 CREATE TABLE product_variation (
-  ID                            BIGSERIAL,
-  var_name                      VARCHAR(100) NOT NULL,
-  var_description               VARCHAR(1000),
-  price                         NUMERIC(10,2) NOT NULL,
-  cat_ID           			        INTEGER NOT NULL REFERENCES product_categories(ID),
-  brand_ID         			        INTEGER REFERENCES brand_vendor(ID),
-  CONSTRAINT var_ID             PRIMARY KEY(ID),
-  CONSTRAINT unique_var_ID      UNIQUE(var_name, var_description, price, cat_ID, brand_ID)
+  ID               BIGSERIAL,
+  var_name         VARCHAR(100) NOT NULL,
+  var_description  VARCHAR(1000),
+  price            NUMERIC(10,2) NOT NULL,
+  cat_ID           			 INTEGER NOT NULL REFERENCES product_categories(ID),
+  brand_ID         			 INTEGER REFERENCES brand_vendor(ID),
+  CONSTRAINT var_ID          PRIMARY KEY(ID),
+  CONSTRAINT unique_var_ID   UNIQUE(var_name, var_description, price, cat_ID, brand_ID)
 );
 
 CREATE SEQUENCE product_id_seq;
 
 CREATE TABLE product(
-    ID                          BIGSERIAL,
-    sku_number                  INTEGER, /*delete*/ 
+    ID                          SERIAL,
     quantity                    INTEGER,
     store_ID                    INTEGER REFERENCES specific_stores(ID),
     var_ID                      INTEGER REFERENCES product_variation(ID),
