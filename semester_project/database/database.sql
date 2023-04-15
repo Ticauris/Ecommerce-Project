@@ -40,10 +40,10 @@ CREATE TABLE specific_stores(
 CREATE SEQUENCE brand_vendor_id_seq;
 
 CREATE TABLE brand_vendor (
-  ID          BIGSERIAL,
-  brand_name  VARCHAR(100) NOT NULL,
-  CONSTRAINT brand_ID PRIMARY KEY(ID),
-  CONSTRAINT unique_brand_name UNIQUE(brand_name)
+  ID                                BIGSERIAL,
+  brand_name                        VARCHAR(100) NOT NULL,
+  CONSTRAINT brand_ID               PRIMARY KEY(ID),
+  CONSTRAINT unique_brand_name      UNIQUE(brand_name)
 );
 
 CREATE SEQUENCE payment_method_id_seq;
@@ -61,7 +61,7 @@ CREATE TABLE payment_method(
 CREATE SEQUENCE product_categories_id_seq;
 
 CREATE TABLE product_categories (
-  ID                            SERIAL,
+  ID                           SERIAL,
   cat_name                     VARCHAR(100) NOT NULL,
   description_text             VARCHAR(1000),   
   CONSTRAINT cat_ID            PRIMARY KEY(ID),
@@ -72,14 +72,14 @@ CREATE TABLE product_categories (
 CREATE SEQUENCE product_variation_id_seq;
 
 CREATE TABLE product_variation (
-  ID               BIGSERIAL,
-  var_name         VARCHAR(100) NOT NULL,
-  var_description  VARCHAR(1000),
-  price            NUMERIC(10,2) NOT NULL,
-  cat_ID           			 INTEGER NOT NULL REFERENCES product_categories(ID),
-  brand_ID         			 INTEGER REFERENCES brand_vendor(ID),
-  CONSTRAINT var_ID          PRIMARY KEY(ID),
-  CONSTRAINT unique_var_ID   UNIQUE(var_name, var_description, price, cat_ID, brand_ID)
+  ID                            BIGSERIAL,
+  var_name                      VARCHAR(100) NOT NULL,
+  var_description               VARCHAR(1000),
+  price                         NUMERIC(10,2) NOT NULL,
+  cat_ID           			        INTEGER NOT NULL REFERENCES product_categories(ID),
+  brand_ID         			        INTEGER REFERENCES brand_vendor(ID),
+  CONSTRAINT var_ID             PRIMARY KEY(ID),
+  CONSTRAINT unique_var_ID      UNIQUE(var_name, var_description, price, cat_ID, brand_ID)
 );
 
 CREATE SEQUENCE product_id_seq;
@@ -107,7 +107,7 @@ CREATE TABLE customer_cart(
 CREATE SEQUENCE shipping_options_seq;
 
 CREATE TABLE shipping_options(
-  ID                             SERIAL,
+  ID                            SERIAL,
   shipping_option               VARCHAR(50),
   CONSTRAINT shipping_ID        PRIMARY KEY(ID)
 );
@@ -124,7 +124,6 @@ CREATE TABLE customer_order (
 	  shipping_ID                 INTEGER REFERENCES shipping_options(ID),
     cart_ID                     INTEGER REFERENCES customer_cart(ID),
     CONSTRAINT order_ID         PRIMARY KEY (ID)  
-    /*maybe add a order status value*/
 );
 
 CREATE SEQUENCE customer_order_item_seq;
