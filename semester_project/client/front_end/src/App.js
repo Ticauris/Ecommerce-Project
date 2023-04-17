@@ -9,7 +9,7 @@ function App() {
       </header>
       <main>
         <h1>Featured Items</h1>
-        <Products />
+        <Products/>
       </main>
     </div>
   );

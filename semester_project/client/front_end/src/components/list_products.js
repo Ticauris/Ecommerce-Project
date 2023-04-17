@@ -13,10 +13,9 @@ function Products() {
     <div>
       {products.map((product) => (
         <div key={product.id}>
-          <img src={product.prod_image} alt={product.id} />=
-          <p>{product.quantity}</p>
-          <p>{product.store_id}</p>
-          <p>{product.var_id}</p>
+          <p>{product.var_name}</p>
+          <img src={product.prod_image} alt={product.id} />
+          ''
         </div>
       ))}
     </div>

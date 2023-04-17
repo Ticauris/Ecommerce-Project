@@ -303,11 +303,11 @@ app.post("/product_variation", async (req, res) => {
   }
 });
 
-app.get("/product_variation", async (req, res) => {
+app.get("/product_variations", async (req, res) => {
   try {
     const product_variation = pool.query("SELECT * FROM product_variation");
     res.json(product_variation.rows[0]);
-  } catch (error) {
+  } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Error retrieving variation." });
   }
@@ -347,7 +347,7 @@ app.post("/product", async (req, res) => {
 
 app.get("/products", async (req, res) => {
   try {
-    const products = await pool.query("SELECT * FROM product");
+    const products = await pool.query("SELECT product.*, product_variation.var_name FROM product INNER JOIN product_variation ON product.var_id = product_variation.ID")
     res.setHeader("Content-Type", "application/json"); // set header to return JSON data
     res.json(products.rows);
   } catch (err) {
