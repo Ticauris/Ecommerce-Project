@@ -1,16 +1,16 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /*creates black header bar 16 pixel wide*/
-header{
+header {
   background-color: #404040;
-  padding: 1rem
+  padding: 1rem;
 }
 
 /*makes links in header white and font bold*/
@@ -18,5 +18,12 @@ header a {
   color: #ffffff;
   font-weight: bold;
   text-decoration: none;
+}
 
+.products {
+  border: 1px #404040;
+}
+
+.products prod_image {
+  width: 50%;
 }
