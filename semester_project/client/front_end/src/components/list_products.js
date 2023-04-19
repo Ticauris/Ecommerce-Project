@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import index 
+import { Link } from "react-router-dom";
+import "./list_products.css";
 
-function Products() {
+function HomeScreen() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -11,16 +12,28 @@ function Products() {
   }, []);
 
   return (
-    <div className="products">
-      {products.map((product) => (
-        <div className="products" key={product.id}>
-          <img src={product.prod_image} alt={product.id} />
-          <p>{product.var_name}</p>
-          <p>{product.price}</p>
-        </div>
-      ))}
+    <div className="home-screen">
+      <h1>Featured Items</h1>
+      <div className="products">
+        {products.map((product) => (
+          <div className="product" key={product.id}>
+            <Link to={`/products/${product.id}`}>
+              <img
+                className="prod_image"
+                src={product.prod_image}
+                alt={product.id}
+              />
+            </Link>
+            <p>
+              <strong>{product.var_name}</strong>
+            </p>
+            <p>${product.price}</p>
+            <button>Add to Cart</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default Products;
+export default HomeScreen;

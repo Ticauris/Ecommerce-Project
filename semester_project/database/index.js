@@ -358,6 +358,21 @@ app.get("/products", async (req, res) => {
   }
 });
 
+app.get("/products/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await pool.query(
+      "SELECT product.*, product_variation.var_name, product_variation.price FROM product INNER JOIN product_variation ON product.var_id = product_variation.ID WHERE product.id = $1",
+      [id]
+    );
+    res.setHeader("Content-Type", "application/json"); // set header to return JSON data
+    res.json(product.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Error retrieving product." });
+  }
+});
+
 app.delete("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;

@@ -15,15 +15,8 @@ header {
 
 /*makes links in header white and font bold*/
 header a {
+  padding: 1rem;
   color: #ffffff;
   font-weight: bold;
   text-decoration: none;
-}
-
-.products {
-  border: 1px #404040;
-}
-
-.products prod_image {
-  width: 50%;
 }
