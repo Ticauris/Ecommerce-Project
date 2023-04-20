@@ -7,16 +7,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/*creates black header bar 16 pixel wide*/
-header {
-  background-color: #404040;
-  padding: 1rem;
+
+
+.site-container {
+  min-height: 100vh;
 }
 
-/*makes links in header white and font bold*/
-header a {
-  padding: 1rem;
-  color: #ffffff;
-  font-weight: bold;
-  text-decoration: none;
+main {
+  flex: 1;
 }
