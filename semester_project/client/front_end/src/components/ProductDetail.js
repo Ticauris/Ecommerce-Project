@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { Button, Col, Row, Badge } from "react-bootstrap"; // import necessary components from react-bootstrap
 import "./list_products.css";
 
 function ProductDetailScreen() {
@@ -45,8 +46,17 @@ function ProductDetailScreen() {
         <img className="prod_image" src={product.prod_image} alt={product.id} />
       </Link>
       <p>${product.price}</p>
-      <p>{product.description}</p>
-      <button>Add to Cart</button>
+      <p>{product.var_description }</p>
+      <Row>
+        <Col className="my-2">
+          {product.quantity > 0 ? (
+            <Badge bg="success">In Stock</Badge>
+          ) : (
+            <Badge bg="danger">Unavailable</Badge>
+          )}
+        </Col>
+      </Row>
+      <Button>Add to Cart</Button>
     </div>
   );
 }

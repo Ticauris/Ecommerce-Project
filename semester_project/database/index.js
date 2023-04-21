@@ -362,7 +362,7 @@ app.get("/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const product = await pool.query(
-      "SELECT product.*, product_variation.var_name, product_variation.price FROM product INNER JOIN product_variation ON product.var_id = product_variation.ID WHERE product.id = $1",
+      "SELECT product.*, product_variation.var_name, product_variation.price, product_variation.var_description FROM product INNER JOIN product_variation ON product.var_id = product_variation.ID WHERE product.id = $1",
       [id]
     );
     res.setHeader("Content-Type", "application/json"); // set header to return JSON data

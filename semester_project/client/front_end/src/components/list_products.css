@@ -19,3 +19,7 @@
   width: 50%;
   height: auto;
 }
+
+.btn-primary{
+  background-color: yellow;
+  color: black}
