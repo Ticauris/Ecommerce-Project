@@ -519,6 +519,25 @@ app.delete("/customer_order_item/:id", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  try {
+    const { customer_email, customer_password } = req.body;
+    const loginResult = await pool.query(
+      "SELECT * FROM customer WHERE customer_email = $1 AND customer_password = $2",
+      [customer_email, customer_password]
+    );
+    if (loginResult.rows.length === 0) {
+      res.status(401).json({ message: "Invalid Credentials" });
+    } else {
+      res.json({ message: "Login successful." });
+    }
+  } catch (error) {
+    console.error(err.message);
+    res.status(500).json({ message: "Error logging in." });
+  }
+});
+
+
 app.listen(5000, () => {
   console.log("server started on 5000");
 });

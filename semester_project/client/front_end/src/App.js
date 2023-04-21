@@ -1,6 +1,7 @@
 import React from "react";
 import HomeScreen from "./components/list_products";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/LoginPage";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import ProductDetailScreen from "./components/ProductDetail";
 import { Navbar, Container } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
@@ -23,7 +24,11 @@ function App() {
             <Routes>
               <Route path="/" element={<HomeScreen />} />
               <Route path="/products/:id" element={<ProductDetailScreen />} />
+              <Route path="/login" element={<Login />} />
             </Routes>
+            <div className="text-center">
+              <Link to="/login">Log in</Link>
+            </div>
           </Container>
         </main>
         <footer>
@@ -35,5 +40,6 @@ function App() {
 }
 
 export default App;
+
 
 /* <Route path="/products/:id" element={<ProductDetailScreen />} /> */
