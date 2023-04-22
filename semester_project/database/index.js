@@ -387,12 +387,12 @@ app.delete("/product/:id", async (req, res) => {
   }
 });
 
-app.post("/customer_cart", async (req, res) => {
+app.post("/customer_cart/:id", async (req, res) => {
   try {
-    const { create_at, product_ID, customer_ID } = req.body;
+    const { create_at, product_ID, customer_ID, store_id } = req.body;
     const new_cart = await pool.query(
-      "INSERT INTO customer_cart(create_at, product_ID, customer_ID) VALUES($1, $2, $3) RETURNING *",
-      [create_at, product_ID, customer_ID]
+      "INSERT INTO customer_cart(create_at, product_ID, customer_id, store_id WHERE customer_id =  ) VALUES($1, $2, $3) RETURNING *",
+      [create_at, product_ID, customer_ID, ]
     );
     console.log(req.body);
     res.json(new_cart.rows[0]);
@@ -523,7 +523,7 @@ app.post("/login", async (req, res) => {
   try {
     const { customer_email, customer_password } = req.body;
     const loginResult = await pool.query(
-      "SELECT * FROM customer WHERE customer_email = $1 AND customer_password = $2",
+      "SELECT * FROM customer WHERE customer_email = $1 AND customer_password = $2 ",
       [customer_email, customer_password]
     );
     if (loginResult.rows.length === 0) {
@@ -536,6 +536,22 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Error logging in." });
   }
 });
+
+
+app.get("/data/:customer_id", async (req, res) => {
+  try {
+    const customer_id = req.params.customer_id;
+    const customerData = await pool.query(
+      "SELECT * FROM customer WHERE customer_id = $1",
+      [customer_id]
+    );
+    res.json(customerData.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Error getting data." });
+  }
+});
+
 
 
 app.listen(5000, () => {

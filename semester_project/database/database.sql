@@ -96,12 +96,14 @@ CREATE TABLE product(
 CREATE SEQUENCE customer_cart_id_seq;
 
 CREATE TABLE customer_cart(
-    ID                          SERIAL,
-    create_at                   INTEGER,
-    product_ID                  INTEGER REFERENCES product(ID),
-    customer_ID                 INTEGER REFERENCES customer(ID),
-    CONSTRAINT cart_ID          PRIMARY KEY (ID)
+    ID          SERIAL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    product_ID  INTEGER REFERENCES product(ID),
+    customer_ID INTEGER REFERENCES customer(ID),
+    store_id    INTEGER REFERENCES specific_stores(id),
+    CONSTRAINT cart_ID PRIMARY KEY (ID)
 );
+
 
 
 CREATE SEQUENCE shipping_options_seq;

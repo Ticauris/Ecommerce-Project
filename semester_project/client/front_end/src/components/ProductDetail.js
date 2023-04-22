@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Button, Col, Row, Badge } from "react-bootstrap"; // import necessary components from react-bootstrap
+import { Col, Row, Badge } from "react-bootstrap";
+import AddToCartButton from "./AddToCartButton";
 import "./list_products.css";
 
-function ProductDetailScreen() {
+function ProductDetailScreen(props) {
   const { id } = useParams();
   const [product, setProduct] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +57,7 @@ function ProductDetailScreen() {
           )}
         </Col>
       </Row>
-      <Button>Add to Cart</Button>
+      <AddToCartButton onClick={() => props.addItem(product.id)}>Add to Cart</AddToCartButton>
     </div>
   );
 }
