@@ -53,29 +53,28 @@ app.post("/address", async (req, res) => {
       unit_num,
       street_num,
       address_line_1,
-      address_line_2,
       city,
       state,
       zip_code,
     } = req.body;
     const new_address = await pool.query(
-      "INSERT INTO address(unit_num, street_num, address_line_1, address_line_2, city, state, zip_code) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO address(unit_num, street_num, address_line_1, city, state, zip_code) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
       [
         unit_num,
         street_num,
         address_line_1,
-        address_line_2,
         city,
         state,
         zip_code,
       ]
     );
-    console.log(req.body);
-    res.json(new_address.rows[0]);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Error creating customer address." });
   }
+
+  console.log(req.body);
+  res.json(new_address.rows[0]);
 });
 
 app.get("/address", async (res) => {
@@ -358,6 +357,20 @@ app.get("/products", async (req, res) => {
   }
 });
 
+app.get("/cart_product/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const products = await pool.query(
+      "SELECT product.* FROM product WHERE id = $1", [id]
+    );
+    res.setHeader("Content-Type", "application/json"); // set header to return JSON data
+    res.json(products.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Error retrieving products." });
+  }
+});
+
 app.get("/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -389,10 +402,11 @@ app.delete("/product/:id", async (req, res) => {
 
 app.post("/customer_cart/:id", async (req, res) => {
   try {
-    const { create_at, product_ID, customer_ID, store_id } = req.body;
+    const { create_at, product_ID, store_id } = req.body;
+    const customer_ID = req.params.id;
     const new_cart = await pool.query(
-      "INSERT INTO customer_cart(create_at, product_ID, customer_id, store_id WHERE customer_id =  ) VALUES($1, $2, $3) RETURNING *",
-      [create_at, product_ID, customer_ID, ]
+      "INSERT INTO customer_cart (create_at, product_ID, customer_id, store_id) VALUES ($1, $2, $3, $4) RETURNING *",
+      [create_at, product_ID, customer_ID, store_id]
     );
     console.log(req.body);
     res.json(new_cart.rows[0]);
@@ -401,6 +415,7 @@ app.post("/customer_cart/:id", async (req, res) => {
     res.status(500).json({ message: "Error creating cart." });
   }
 });
+
 
 app.delete("/customer_cart/:id", async (req, res) => {
   try {

@@ -6,6 +6,8 @@ import ProductDetailScreen from "./components/ProductDetail";
 import Cart from "./components/CustomerCart";
 import { Navbar, Container } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import AddToCartButton from "./components/AddToCartButton";
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -13,6 +15,18 @@ function App() {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
+  };
+
+  const [items, setItems] = useState([]);
+
+  const addItem = async (productID) => {
+    try {
+      const response = await fetch(`/cart_product/${productID}`);
+      const product = await response.json();
+      setItems([items, product]);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -30,9 +44,18 @@ function App() {
         <main>
           <Container>
             <Routes>
-              <Route path="/" element={<HomeScreen isLoggedIn={isLoggedIn} />} />
-              <Route path="/products/:id"element={<ProductDetailScreen addItem={Cart.addItem} />}/>
-              <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+              <Route
+                path="/"
+                element={<HomeScreen isLoggedIn={isLoggedIn} />}
+              />
+              <Route
+                path="/products/:id"
+                element={<ProductDetailScreen addItem={AddToCartButton} />}
+              />
+              <Route
+                path="/login"
+                element={<Login handleLogin={handleLogin} />}
+              />
               <Route path="/cart" element={<Cart customerID={customerID} />} />
             </Routes>
             <div className="text-center">
@@ -53,6 +76,3 @@ function App() {
 }
 
 export default App;
-
-
-/* <Route path="/products/:id" element={<ProductDetailScreen />} /> */

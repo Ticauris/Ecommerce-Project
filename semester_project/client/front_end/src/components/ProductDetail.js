@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Col, Row, Badge } from "react-bootstrap";
+import { Col, Row, Badge, Button } from "react-bootstrap";
 import AddToCartButton from "./AddToCartButton";
 import "./list_products.css";
 
@@ -10,6 +10,10 @@ function ProductDetailScreen(props) {
   const [product, setProduct] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleAddToCart = (productId) => {
+    props.addItem(productId);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -47,7 +51,7 @@ function ProductDetailScreen(props) {
         <img className="prod_image" src={product.prod_image} alt={product.id} />
       </Link>
       <p>${product.price}</p>
-      <p>{product.var_description }</p>
+      <p>{product.var_description}</p>
       <Row>
         <Col className="my-2">
           {product.quantity > 0 ? (
@@ -57,7 +61,10 @@ function ProductDetailScreen(props) {
           )}
         </Col>
       </Row>
-      <AddToCartButton onClick={() => props.addItem(product.id)}>Add to Cart</AddToCartButton>
+      <AddToCartButton addItem={handleAddToCart} productId={product.id} />
+      <Link to="/CustomerCart">
+        <Button>View Cart</Button>
+      </Link>
     </div>
   );
 }
