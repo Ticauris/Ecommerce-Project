@@ -8,13 +8,14 @@ const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLoginSubmit = () => {
-    fetch("http://localhost:5000/login", {
+  const handleLoginSubmit = (event) => { //set event to prevent error from using global variable in strict mode
+    event.preventDefault();
+    fetch("http://localhost:5000/login", { //api to check login credintials using sql post method
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ customer_email: email, customer_password: password })
+      body: JSON.stringify({ customer_email: email, customer_password: password }) 
     })
       .then((response) => {
         if (response.ok) {
@@ -25,7 +26,7 @@ const Login = (props) => {
       })
       .then((data) => {
         console.log("Login Successful");
-        props.handleLogin();
+        props.handleLogin(data.customer_ID);
         document.cookie = `isLoggedIn=true;`;
         navigate("/");
       })

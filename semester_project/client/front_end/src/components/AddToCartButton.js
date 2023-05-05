@@ -1,10 +1,13 @@
-import React from "react";
-import { Button } from "react-bootstrap";
-
+import './AddToCartButton.css'
+import { Button} from "react-bootstrap";
 function AddToCartButton(props) {
+  const { addItem, productId } = props;
   return (
-    <Button onClick={props.onClick}>Add to Cart</Button>
+    <Button onClick={() => addItem(productId)}>Add to cart</Button>
   );
 }
 
+
 export default AddToCartButton;
+
+/**import "./list_products.css"; */
